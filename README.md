@@ -327,8 +327,7 @@ gates the *panel* and not the database — see [About the passcode](#about-the-p
 ### Custom domain
 
 `tango-sanpedro.com` and `www.tango-sanpedro.com` are attached in
-[`wrangler.toml`](wrangler.toml) under `routes` (commented out until the domain is active on
-Cloudflare), so every deploy re-attaches them and nothing needs
+[`wrangler.toml`](wrangler.toml) under `routes`, so every deploy re-attaches them and nothing needs
 adding by hand in the dashboard — don't, or there are two places to keep in sync. The zone has
 to be active in the same Cloudflare account, and neither hostname may already have a DNS record.
 [DEPLOY.md](DEPLOY.md) step 4 walks through both.

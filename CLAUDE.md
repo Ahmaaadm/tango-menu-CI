@@ -93,9 +93,9 @@ send and the restaurant confirms in the chat. **Never add a payment step.**
 ## Commands
 
 - **Deploying**: GitHub (`Ahmaaadm/tango-menu-CI`) → Cloudflare Workers Builds, Worker
-  `tango-menu-ci`. The `tango-sanpedro.com` routes in `wrangler.toml` are **commented out** until the
-  domain's nameservers move from GoDaddy to Cloudflare — a route to an inactive zone fails the
-  whole deploy. `VITE_*` are *build* variables in the dashboard. Full runbook in
+  `tango-menu-ci`. `tango-sanpedro.com` + `www` are attached by `routes` in `wrangler.toml` (DNS moved
+  from GoDaddy to Cloudflare; the domain stays registered at GoDaddy). A route to a zone that is
+  not Active fails the whole deploy. `VITE_*` are *build* variables in the dashboard. Full runbook in
   `DEPLOY.md` — keep it in step with any change to env vars, SQL files or `wrangler.toml`.
 
 - `npm run dev` — dev server on :5174

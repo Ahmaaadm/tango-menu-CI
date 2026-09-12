@@ -164,10 +164,9 @@ This matters: the deploy creates those two records itself, and it **fails** if t
 
 ## 5 · Cloudflare — connect GitHub and deploy
 
-> **Current state:** the site is deployed to its free `workers.dev` address, and the domain is
-> switched **off** in `wrangler.toml` until step 4 is finished. To switch it on: wait for
-> **Active**, uncomment the `routes` block in `wrangler.toml`, then
-> `git commit -am "Attach tango-sanpedro.com" && git push`. The push redeploys with the domain.
+> **Current state:** GitHub connected, site live on `tango-menu-ci.ahmadmoussa680.workers.dev`,
+> nameservers moved from GoDaddy to Cloudflare, and the domain attached through `routes` in
+> `wrangler.toml`.
 
 1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Import a repository** → connect
    GitHub if asked, and give Cloudflare access to the `tango-menu-CI` repository.

@@ -11,18 +11,18 @@
 name = "tango-menu-ci"
 compatibility_date = "2026-09-08"
 
-# Until the domain is live, this free address is the site:
-# https://tango-menu-ci.<your-account>.workers.dev
+# Kept on as a second address: https://tango-menu-ci.ahmadmoussa680.workers.dev
 workers_dev = true
 
-# CUSTOM DOMAIN — switched off for now. tango-sanpedro.com's nameservers still
-# point to GoDaddy, and a deploy that names a domain Cloudflare doesn't manage
-# fails outright ("Could not find zone"). To turn it on: finish DEPLOY.md
-# step 4 until the domain shows Active, uncomment these lines, and push.
-# routes = [
-#   { pattern = "tango-sanpedro.com", custom_domain = true },
-#   { pattern = "www.tango-sanpedro.com", custom_domain = true }
-# ]
+# The domain is attached here rather than in the dashboard, so this file is the
+# one source of truth and every deploy re-attaches it. It needs the zone to be
+# Active in this Cloudflare account — a route to a missing or pending zone fails
+# the whole deploy ("Could not find zone"). Cloudflare creates the DNS records
+# and HTTPS certificates for both hostnames itself.
+routes = [
+  { pattern = "tango-sanpedro.com", custom_domain = true },
+  { pattern = "www.tango-sanpedro.com", custom_domain = true }
+]
 
 [assets]
 directory = "./dist"
