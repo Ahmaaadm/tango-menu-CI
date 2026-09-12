@@ -7,17 +7,22 @@
 # variables when Cloudflare builds from GitHub (how this site is deployed), or
 # your local .env if you ever deploy by hand. See DEPLOY.md.
 
-name = "tango-restaurant-menu"
+# Must match the Worker Cloudflare created when the GitHub repo was connected.
+name = "tango-menu-ci"
 compatibility_date = "2026-09-08"
 
-# The domain lives here rather than in the dashboard so this file stays the one
-# source of truth: every deploy re-attaches it. The zone must already be active
-# in the same Cloudflare account, and neither hostname may have an existing
-# DNS record, or the deploy fails — DEPLOY.md step 4 covers both.
-routes = [
-  { pattern = "tango-sanpedro.com", custom_domain = true },
-  { pattern = "www.tango-sanpedro.com", custom_domain = true }
-]
+# Until the domain is live, this free address is the site:
+# https://tango-menu-ci.<your-account>.workers.dev
+workers_dev = true
+
+# CUSTOM DOMAIN — switched off for now. tango-sanpedro.com's nameservers still
+# point to GoDaddy, and a deploy that names a domain Cloudflare doesn't manage
+# fails outright ("Could not find zone"). To turn it on: finish DEPLOY.md
+# step 4 until the domain shows Active, uncomment these lines, and push.
+# routes = [
+#   { pattern = "tango-sanpedro.com", custom_domain = true },
+#   { pattern = "www.tango-sanpedro.com", custom_domain = true }
+# ]
 
 [assets]
 directory = "./dist"

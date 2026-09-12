@@ -105,7 +105,7 @@ and never goes to GitHub. Cloudflare gets the same values separately in step 5.
 ## 3 · GitHub — push the code
 
 1. On [github.com](https://github.com/new), create a new repository:
-   - Owner: `Ahmaaadm`, name: `tango-restaurant-menu`
+   - Owner: `Ahmaaadm`, name: `tango-menu-CI`
    - **Private** is fine and is the safer choice
    - **Do not** tick *Add a README*, *.gitignore* or *license* — the repo must start empty
 2. Push this folder to it:
@@ -116,7 +116,7 @@ and never goes to GitHub. Cloudflare gets the same values separately in step 5.
    git add .
    git commit -m "Tango online carte"
    git branch -M main
-   git remote add origin https://github.com/Ahmaaadm/tango-restaurant-menu.git
+   git remote add origin https://github.com/Ahmaaadm/tango-menu-CI.git
    git push -u origin main
    ```
 
@@ -134,15 +134,20 @@ Cloudflare can only attach the site to a domain whose DNS it runs. Which case ar
 
 It is already in your account. Skip to the **DNS clean-up** below.
 
-### B — you bought it somewhere else (Namecheap, GoDaddy, OVH, Hostinger…)
+### B — you bought it somewhere else (GoDaddy — this one — Namecheap, OVH…)
 
 1. Cloudflare dashboard → **Add a domain** (also shown as *Onboard a domain*) → type
    `tango-sanpedro.com` → **Free** plan.
 2. Cloudflare scans the existing records, then shows **two nameservers**, like
    `ada.ns.cloudflare.com` and `bob.ns.cloudflare.com`. Keep that tab open.
-3. At the company you bought the domain from → the domain's settings → **Nameservers** → choose
-   *Custom nameservers* → **replace** the existing ones with Cloudflare's two. Save.
-4. Back in Cloudflare, press **Check nameservers**. The domain turns **Active** anywhere from a
+3. At the company you bought the domain from, replace its nameservers with Cloudflare's two.
+   **On GoDaddy**: *My Products* → `tango-sanpedro.com` → **DNS** → **Nameservers** tab →
+   **Change Nameservers** → *I'll use my own nameservers* → enter both → **Save** → confirm the
+   warning. The current ones are `ns19.domaincontrol.com` / `ns20.domaincontrol.com`; after the
+   change GoDaddy's own DNS page stops mattering — all records are managed in Cloudflare.
+4. Back in Cloudflare, press **Check nameservers**. (You can check from a terminal too:
+   `dig +short NS tango-sanpedro.com` shows `…ns.cloudflare.com` once GoDaddy has saved the change.)
+    The domain turns **Active** anywhere from a
    few minutes to 24 hours later; Cloudflare emails you when it does.
 
    **Do not continue to step 5 until it says Active.**
@@ -159,13 +164,18 @@ This matters: the deploy creates those two records itself, and it **fails** if t
 
 ## 5 · Cloudflare — connect GitHub and deploy
 
+> **Current state:** the site is deployed to its free `workers.dev` address, and the domain is
+> switched **off** in `wrangler.toml` until step 4 is finished. To switch it on: wait for
+> **Active**, uncomment the `routes` block in `wrangler.toml`, then
+> `git commit -am "Attach tango-sanpedro.com" && git push`. The push redeploys with the domain.
+
 1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Import a repository** → connect
-   GitHub if asked, and give Cloudflare access to `tango-restaurant-menu`.
-2. Select `tango-restaurant-menu` and set:
+   GitHub if asked, and give Cloudflare access to the `tango-menu-CI` repository.
+2. Select `tango-menu-CI` and set:
 
    | Setting | Value |
    | --- | --- |
-   | Project name | `tango-restaurant-menu` — **exactly this**, it must match `wrangler.toml` |
+   | Project name | `tango-menu-ci` — it must match `name` in `wrangler.toml` |
    | Production branch | `main` |
    | Build command | `npm run build` |
    | Deploy command | `npx wrangler deploy` (the default) |
