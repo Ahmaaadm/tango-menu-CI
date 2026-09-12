@@ -1,0 +1,26 @@
+# Cloudflare deployment. The site is static — no Worker script — so `main` is
+# intentionally absent and `wrangler deploy` just uploads ./dist.
+#
+# The VITE_* variables are NOT set here, and they are not Worker runtime
+# variables either: Vite compiles them into the bundle at build time. So they
+# come from whichever machine runs `npm run build` — the dashboard's *Build*
+# variables when Cloudflare builds from GitHub (how this site is deployed), or
+# your local .env if you ever deploy by hand. See DEPLOY.md.
+
+name = "tango-restaurant-menu"
+compatibility_date = "2026-09-08"
+
+# The domain lives here rather than in the dashboard so this file stays the one
+# source of truth: every deploy re-attaches it. The zone must already be active
+# in the same Cloudflare account, and neither hostname may have an existing
+# DNS record, or the deploy fails — DEPLOY.md step 4 covers both.
+routes = [
+  { pattern = "tango-sanpedro.com", custom_domain = true },
+  { pattern = "www.tango-sanpedro.com", custom_domain = true }
+]
+
+[assets]
+directory = "./dist"
+# Hash routing means #/staff never reaches the server, but this keeps any
+# stray deep link returning the app instead of a 404.
+not_found_handling = "single-page-application"
