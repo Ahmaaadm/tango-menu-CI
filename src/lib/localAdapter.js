@@ -31,7 +31,7 @@ function seed() {
       image_url: it.image ?? null,
       hint: it.hint,
       tags: it.tags ?? [],
-      available: true,
+      available: it.available ?? true,
       sort_order: gi * 100 + i
     }))
   );

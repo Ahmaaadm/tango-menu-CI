@@ -17,9 +17,17 @@ send and the restaurant confirms in the chat. **Never add a payment step.**
 - Two adapters, one interface: `localAdapter.js` (localStorage, zero setup) and
   `supabaseAdapter.js` (Postgres + storage). Supabase is used when `VITE_SUPABASE_URL` and
   `VITE_SUPABASE_ANON_KEY` are both set. **Any new persistence goes in both adapters.**
-- Every dish carries a **French line** (`french`) under its English name, and sections carry one
-  too. Both are optional per row and render only when they have text — a null must produce no
-  empty line and no placeholder. Same for the two serving notes (`note`, `note_french`).
+- **The carte is in French** — dish and section names are the French wording of the printed menu,
+  because that is what San Pédro reads and what the book on the table says. The owner asked for
+  this explicitly after a first pass in English; do not translate the dish names back.
+- `french` is an optional **second line** under a name, and is currently null on every row, so
+  each dish shows one line. It stays in the schema: fill it in and a translation appears under
+  every dish. Same for `note` / `note_french` under a section name, where only `note` is used.
+  All four render only when they have text — a null must produce no empty line and no
+  placeholder.
+- The **interface** around the carte (buttons, "Search the carte…", the order panel) is still in
+  English. That is not a decision anyone has made — it simply has not been asked for. If it is
+  ever translated, `src/lib/tags.js` already carries a `french` label for every tag.
 - Styling is inline React style objects plus the tokens and keyframes in `src/index.css`.
   Don't add a CSS framework or Tailwind unless asked.
 - Colours are **role tokens** on `:root` (`--paper`, `--panel`, `--band`, `--ink*`, `--ember*`,
@@ -100,7 +108,11 @@ send and the restaurant confirms in the chat. **Never add a payment step.**
 
 - `npm run dev` — dev server on :5174
 - `npm run build` — production build to `dist/`
-- `npm run seed:sql` — regenerate `supabase/seed.sql` from `src/menuData.js`
+- `npm run seed:sql` — regenerate `supabase/seed.sql` (adds to an empty DB) **and**
+  `supabase/replace-menu.sql` (erases every section and dish, then inserts, in one transaction) from
+  `src/menuData.js`. Both are generated — never hand-edit them. `menuData.js` is the restaurant's
+  real carte; dishes the printed menu gives no price carry `available: false` so guests never see
+  `0 FCFA` — staff price them in `#/staff` and switch them on.
 - `npm run clear:photos` — delete bucket photos nothing points at (`--all` empties the bucket).
   Dry run unless `--yes`. Run it from the project root; it reads `.env` relative to the cwd.
   This is the only way to actually free storage — SQL can delete a file's metadata, not the file.

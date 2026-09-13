@@ -1,112 +1,114 @@
-/* Seed carte for Tango. This is the shape every row in the data layer takes,
-   and what local mode is populated from the first time the app runs.
+/* Tango's real carte, transcribed from the printed menu (photos, 2026-09-12).
+   This is the shape every row in the data layer takes, what local mode is
+   populated from, and what scripts/gen-seed.mjs turns into both
+   supabase/seed.sql and supabase/replace-menu.sql.
 
-   name    — English, the line guests read first
-   french  — the line beneath it; Tango's dining room is bilingual
-   hint    — what belongs in the striped box until a photo is uploaded
-   tags    — see src/lib/tags.js; an empty array is normal
-   price   — whole FCFA, no decimals */
+   THE CARTE IS IN FRENCH, like the printed one — San Pédro reads French, and
+   the owner asked for the menu to match the book on the table. So `name` is
+   the French wording and `french` (the optional second line under a name) is
+   null throughout. It stays in the schema: fill it in and a second line
+   appears under every dish, which is where an English translation would go if
+   the restaurant ever wants one.
+
+   name       — the dish, in French, as printed (spelling corrected)
+   french     — optional second line under the name; unused here
+   hint       — what belongs in the empty photo frame until a photo is uploaded
+   tags       — see src/lib/tags.js; only where the name makes it certain
+   price      — whole FCFA, no decimals
+   available  — false hides a dish from guests. Used below for the dishes the
+                printed menu lists WITHOUT a price: they exist, so staff can
+                fill the price in from #/staff and switch them on, but a guest
+                must never see "0 FCFA".
+
+   One price per row, so a dish sold in two sizes (entier / demi, grand / petit
+   modèle) is two rows side by side. */
+
+const SIDES = 'Nos plats sont servis avec la garniture de votre choix : riz, brocoli, chou-fleur, pommes de terre sautées, frites, alloco, légumes sautés, purée de pommes de terre ou gratin';
 
 export const MENU = [
   {
-    id: 'starters', name: 'Starters', french: 'Entrées',
-    note: 'Served with house bread', note_french: 'Servi avec le pain maison', image: null,
+    id: 'entrees', name: 'Entrées', french: null, image: null,
     items: [
-      { id: 'st-1', name: 'Beef Empanadas', french: 'Empanadas au bœuf · trois pièces', price: 4500, hint: 'empanadas', tags: ['pick'] },
-      { id: 'st-2', name: 'Garlic Prawns', french: 'Crevettes à l’ail et persil', price: 7500, hint: 'prawn pan', tags: [] },
-      { id: 'st-3', name: 'Grilled Provolone', french: 'Provolone grillé à l’origan', price: 5500, hint: 'provoleta', tags: ['veg'] },
-      { id: 'st-4', name: 'Chicken Wings', french: 'Ailes de poulet marinées', price: 5000, hint: 'wings', tags: ['spicy'] },
-      { id: 'st-5', name: 'Vegetable Spring Rolls', french: 'Nems aux légumes', price: 4000, hint: 'spring rolls', tags: ['veg'] },
-      { id: 'st-6', name: 'Soup of the Moment', french: 'Soupe du moment', price: 3500, hint: 'soup bowl', tags: [] }
+      { id: 'en-avocat-thon', name: 'Salade d’avocat au thon', french: null, price: 7000, hint: 'avocat thon', tags: [] },
+      { id: 'en-grecque', name: 'Salade grecque', french: null, price: 6000, hint: 'salade grecque', tags: ['veg'] },
+      { id: 'en-carpaccio', name: 'Carpaccio de poisson', french: null, price: 6000, hint: 'carpaccio', tags: [] },
+      { id: 'en-avocat-crevettes', name: 'Avocat crevettes', french: null, price: 7000, hint: 'avocat crevettes', tags: [] },
+      { id: 'en-cesar', name: 'Salade César', french: null, price: 6000, hint: 'salade cesar', tags: [] },
+      { id: 'en-mozzarella', name: 'Salade à la mozzarella', french: null, price: 6500, hint: 'mozzarella', tags: [] },
+      { id: 'en-chevre', name: 'Salade de fromage de chèvre', french: null, price: 7000, hint: 'chevre chaud', tags: [] },
+      { id: 'en-trio', name: 'Trio de salades', french: null, price: 9000, hint: 'trio salades', tags: [] }
     ]
   },
   {
-    id: 'salads', name: 'Salads', french: 'Salades', image: null,
-    note: 'Large enough for a light main', note_french: 'Assez copieuses pour un plat léger',
+    id: 'pizzas', name: 'Pizzas et sandwich', french: null, image: null,
     items: [
-      { id: 'sa-1', name: 'Tango Caesar', french: 'César au poulet grillé', price: 7000, hint: 'caesar', tags: ['pick'] },
-      { id: 'sa-2', name: 'Avocado & Grapefruit', french: 'Avocat et pamplemousse', price: 6500, hint: 'avocado salad', tags: ['veg'] },
-      { id: 'sa-3', name: 'Grilled Goat Cheese', french: 'Salade de chèvre chaud', price: 7000, hint: 'goat cheese', tags: ['veg'] },
-      { id: 'sa-4', name: 'Tuna Niçoise', french: 'Niçoise au thon', price: 7500, hint: 'nicoise', tags: [] }
+      { id: 'pz-margherita-gm', name: 'Pizza marguerite · grand modèle', french: null, price: 7000, hint: 'marguerite', tags: ['veg'] },
+      { id: 'pz-margherita-pm', name: 'Pizza marguerite · petit modèle', french: null, price: 5000, hint: 'marguerite', tags: ['veg'] },
+      /* No price on the printed menu — hidden until staff set one. */
+      { id: 'pz-royale', name: 'Pizza royale', french: null, price: 0, hint: 'pizza royale', tags: [], available: false },
+      { id: 'pz-vegetarienne', name: 'Pizza végétarienne', french: null, price: 0, hint: 'pizza vegetarienne', tags: ['veg'], available: false },
+      { id: 'pz-reine-crevettes', name: 'Pizza reine crevettes', french: null, price: 0, hint: 'reine crevettes', tags: [], available: false },
+      { id: 'pz-soujouk', name: 'Pizza soujouk', french: null, price: 0, hint: 'soujouk', tags: [], available: false },
+      { id: 'pz-pepperoni', name: 'Pizza pepperoni', french: null, price: 0, hint: 'pepperoni', tags: [], available: false },
+      { id: 'pz-saumon-fume', name: 'Pizza saumon fumé', french: null, price: 0, hint: 'saumon fume', tags: [], available: false },
+      { id: 'pz-sandwich-burger', name: 'Sandwich burger', french: null, price: 4000, hint: 'sandwich burger', tags: [] }
     ]
   },
   {
-    id: 'grill', name: 'From the Grill', french: 'Grillades',
-    note: 'Choose a side and a sauce', note_french: 'Au choix : un accompagnement et une sauce', image: null,
+    id: 'plats', name: 'Plats', french: null, image: null,
     items: [
-      { id: 'gr-1', name: 'Rib Eye', french: 'Entrecôte 300 g', price: 16500, hint: 'rib eye', tags: ['pick'] },
-      { id: 'gr-2', name: 'Beef Skewers', french: 'Brochettes de bœuf', price: 9500, hint: 'skewers', tags: [] },
-      { id: 'gr-3', name: 'Half Chicken', french: 'Demi-poulet grillé', price: 8500, hint: 'grilled chicken', tags: [] },
-      { id: 'gr-4', name: 'Lamb Chops', french: 'Côtelettes d’agneau', price: 15000, hint: 'lamb chops', tags: [] },
-      { id: 'gr-5', name: 'Merguez Plate', french: 'Assiette de merguez', price: 8000, hint: 'merguez', tags: ['spicy'] },
-      { id: 'gr-6', name: 'Mixed Grill for Two', french: 'Grillade mixte pour deux', price: 26000, hint: 'mixed grill', tags: ['pick'] }
+      { id: 'pl-filet-champignon', name: 'Filet de bœuf crème champignons', french: null, price: 11000, hint: 'filet de boeuf', tags: [] },
+      { id: 'pl-pave-merou', name: 'Pavé de mérou', french: null, price: 10000, hint: 'pave de merou', tags: [] },
+      { id: 'pl-entrecote', name: 'Entrecôte', french: null, price: 18000, hint: 'entrecote', tags: [] },
+      { id: 'pl-ecrevisses-sautees', name: 'Écrevisses sautées', french: null, price: 9000, hint: 'ecrevisses', tags: [] },
+      { id: 'pl-langouste', name: 'Langouste braisée au beurre d’ail', french: null, price: 12000, hint: 'langouste', tags: [] },
+      { id: 'pl-spaghetti-mer', name: 'Spaghetti aux fruits de mer', french: null, price: 10000, hint: 'spaghetti mer', tags: [] },
+      { id: 'pl-souris-agneau', name: 'Souris d’agneau', french: null, price: 13000, hint: 'souris agneau', tags: [] },
+      { id: 'pl-brochettes-estragon', name: 'Brochettes de mérou à l’estragon', french: null, price: 10000, hint: 'brochettes merou', tags: [] },
+      /* No price on the printed menu — hidden until staff set one. */
+      { id: 'pl-merou-tomate', name: 'Filet de mérou tomate basilic', french: null, price: 0, hint: 'filet de merou', tags: [], available: false },
+      { id: 'pl-burger', name: 'Plat de burger', french: null, price: 6000, hint: 'burger', tags: [] },
+      { id: 'pl-filet-moutarde', name: 'Filet de bœuf moutarde à l’ancienne', french: null, price: 12000, hint: 'filet moutarde', tags: [] },
+      { id: 'pl-poulet-pane', name: 'Poulet pané', french: null, price: 10000, hint: 'poulet pane', tags: [] },
+      { id: 'pl-sole-meuniere', name: 'Sole meunière', french: null, price: 10000, hint: 'sole', tags: [] },
+      { id: 'pl-bolognaise', name: 'Spaghetti à la bolognaise', french: null, price: 9000, hint: 'bolognaise', tags: [] }
     ]
   },
   {
-    id: 'sea', name: 'From the Sea', french: 'Poissons et fruits de mer', image: null,
+    id: 'braises', name: 'Plats africains · braisés', french: null, image: null,
+    note: SIDES, note_french: null,
     items: [
-      { id: 'se-1', name: 'Whole Grilled Sea Bream', french: 'Dorade entière grillée', price: 12000, hint: 'sea bream', tags: [] },
-      { id: 'se-2', name: 'Captain Fillet', french: 'Filet de capitaine', price: 13500, hint: 'captain fillet', tags: ['pick'] },
-      { id: 'se-3', name: 'Grilled Prawns', french: 'Gambas grillées', price: 15000, hint: 'gambas', tags: [] },
-      { id: 'se-4', name: 'Fried Calamari', french: 'Calamars frits, sauce tartare', price: 9000, hint: 'calamari', tags: [] }
+      { id: 'af-poulet-braise-entier', name: 'Poulet braisé · entier', french: null, price: 10000, hint: 'poulet braise', tags: [] },
+      { id: 'af-poulet-braise-demi', name: 'Poulet braisé · demi', french: null, price: 5000, hint: 'poulet braise', tags: [] },
+      { id: 'af-brochette-merou', name: 'Brochette de mérou', french: null, price: 10000, hint: 'brochette merou', tags: [] },
+      { id: 'af-brochette-ecrevisses', name: 'Brochette d’écrevisses', french: null, price: 11000, hint: 'brochette ecrevisses', tags: [] }
     ]
   },
   {
-    id: 'house', name: 'House Specialities', french: 'Spécialités de la maison', image: null,
-    note: 'The dishes the kitchen is known for', note_french: 'Les plats qui font la maison',
+    id: 'soupes', name: 'Plats africains · soupes', french: null, image: null,
+    note: SIDES, note_french: null,
     items: [
-      { id: 'ho-1', name: 'Braised Chicken & Attiéké', french: 'Poulet braisé et attiéké', price: 8500, hint: 'poulet braise', tags: ['pick'] },
-      { id: 'ho-2', name: 'Kedjenou', french: 'Kedjenou de poulet', price: 8000, hint: 'kedjenou', tags: ['spicy'] },
-      { id: 'ho-3', name: 'Peanut Stew', french: 'Sauce arachide, riz blanc', price: 7500, hint: 'peanut stew', tags: [] },
-      { id: 'ho-4', name: 'Garba Deluxe', french: 'Garba revisité', price: 6000, hint: 'garba', tags: ['new'] }
+      { id: 'af-kedjenou-poisson', name: 'Kedjenou de poisson', french: null, price: 9000, hint: 'kedjenou poisson', tags: [] },
+      { id: 'af-kedjenou-poulet-entier', name: 'Kedjenou de poulet · entier', french: null, price: 10000, hint: 'kedjenou poulet', tags: [] },
+      { id: 'af-kedjenou-poulet-demi', name: 'Kedjenou de poulet · demi', french: null, price: 5000, hint: 'kedjenou poulet', tags: [] },
+      /* Price partly hidden by glare on the photo; read as 9 000. */
+      { id: 'af-kedjenou-ecrevisses', name: 'Kedjenou d’écrevisses', french: null, price: 9000, hint: 'kedjenou ecrevisses', tags: [] }
     ]
   },
   {
-    id: 'pasta', name: 'Pasta & Risotto', french: 'Pâtes et risottos', image: null,
+    id: 'boissons', name: 'Boissons', french: null, image: null,
     items: [
-      { id: 'pa-1', name: 'Beef Bolognese', french: 'Tagliatelles bolognaise', price: 7500, hint: 'bolognese', tags: [] },
-      { id: 'pa-2', name: 'Prawn Linguine', french: 'Linguine aux gambas', price: 10500, hint: 'linguine', tags: [] },
-      { id: 'pa-3', name: 'Mushroom Risotto', french: 'Risotto aux champignons', price: 8000, hint: 'risotto', tags: ['veg'] },
-      { id: 'pa-4', name: 'Four Cheese Penne', french: 'Penne aux quatre fromages', price: 7500, hint: 'penne', tags: ['veg'] }
-    ]
-  },
-  {
-    id: 'burgers', name: 'Burgers & Sandwiches', french: 'Burgers et sandwichs', image: null,
-    note: 'All served with fries', note_french: 'Tous servis avec des frites',
-    items: [
-      { id: 'bu-1', name: 'Tango Burger', french: 'Burger maison, cheddar, oignons confits', price: 8000, hint: 'burger', tags: ['pick'] },
-      { id: 'bu-2', name: 'Chicken Club', french: 'Club sandwich au poulet', price: 6500, hint: 'club sandwich', tags: [] },
-      { id: 'bu-3', name: 'Veggie Burger', french: 'Burger végétarien', price: 6500, hint: 'veggie burger', tags: ['veg'] }
-    ]
-  },
-  {
-    id: 'sides', name: 'Sides', french: 'Accompagnements', image: null,
-    items: [
-      { id: 'si-1', name: 'French Fries', french: 'Frites maison', price: 2500, hint: 'fries', tags: ['veg'] },
-      { id: 'si-2', name: 'Attiéké', french: 'Attiéké', price: 2000, hint: 'attieke', tags: ['veg'] },
-      { id: 'si-3', name: 'Fried Plantain', french: 'Alloco', price: 2500, hint: 'alloco', tags: ['veg'] },
-      { id: 'si-4', name: 'Sautéed Vegetables', french: 'Légumes sautés', price: 3000, hint: 'vegetables', tags: ['veg'] },
-      { id: 'si-5', name: 'White Rice', french: 'Riz blanc', price: 2000, hint: 'rice', tags: ['veg'] }
-    ]
-  },
-  {
-    id: 'desserts', name: 'Desserts', french: 'Desserts', image: null,
-    items: [
-      { id: 'de-1', name: 'Chocolate Fondant', french: 'Fondant au chocolat', price: 4500, hint: 'fondant', tags: ['pick'] },
-      { id: 'de-2', name: 'Crème Caramel', french: 'Crème caramel', price: 3500, hint: 'creme caramel', tags: [] },
-      { id: 'de-3', name: 'Seasonal Fruit', french: 'Assiette de fruits frais', price: 4000, hint: 'fruit plate', tags: ['veg'] },
-      { id: 'de-4', name: 'Ice Cream, Three Scoops', french: 'Glace, trois boules', price: 3500, hint: 'ice cream', tags: [] }
-    ]
-  },
-  {
-    id: 'drinks', name: 'Drinks', french: 'Boissons', image: null,
-    items: [
-      { id: 'dr-1', name: 'Bissap', french: 'Jus de bissap', price: 2000, hint: 'bissap', tags: ['veg'] },
-      { id: 'dr-2', name: 'Ginger Juice', french: 'Jus de gingembre', price: 2000, hint: 'ginger juice', tags: ['spicy'] },
-      { id: 'dr-3', name: 'Fresh Lemonade', french: 'Citronnade fraîche', price: 2500, hint: 'lemonade', tags: ['veg'] },
-      { id: 'dr-4', name: 'Still Water', french: 'Eau plate 1 L', price: 1000, hint: 'water', tags: [] },
-      { id: 'dr-5', name: 'Soft Drink', french: 'Soda au choix', price: 1500, hint: 'soda', tags: [] },
-      { id: 'dr-6', name: 'Espresso', french: 'Café expresso', price: 1500, hint: 'espresso', tags: [] }
+      { id: 'bo-jus-pomme', name: 'Jus de pomme', french: null, price: 3000, hint: 'jus de pomme', tags: [] },
+      { id: 'bo-jus-carotte', name: 'Jus de carotte', french: null, price: 3000, hint: 'jus de carotte', tags: [] },
+      { id: 'bo-jus-orange', name: 'Jus d’orange', french: null, price: 2500, hint: 'jus orange', tags: [] },
+      { id: 'bo-sucrerie', name: 'Sucrerie', french: null, price: 1000, hint: 'sucrerie', tags: [] },
+      { id: 'bo-energisante', name: 'Boisson énergisante', french: null, price: 1000, hint: 'energisante', tags: [] },
+      { id: 'bo-eau-15', name: 'Eau 1,5 L', french: null, price: 1500, hint: 'eau 1.5l', tags: [] },
+      { id: 'bo-eau-05', name: 'Eau 0,5 L', french: null, price: 500, hint: 'eau 0.5l', tags: [] },
+      { id: 'bo-nespresso', name: 'Café Nespresso', french: null, price: 2000, hint: 'nespresso', tags: [] },
+      { id: 'bo-the-arabe', name: 'Thé arabe', french: null, price: 2000, hint: 'the arabe', tags: [] },
+      { id: 'bo-perrier', name: 'Perrier', french: null, price: 2000, hint: 'perrier', tags: [] },
+      { id: 'bo-cafe-arabe', name: 'Café arabe', french: null, price: 2500, hint: 'cafe arabe', tags: [] }
     ]
   }
 ];

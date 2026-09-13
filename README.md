@@ -34,9 +34,9 @@ Then ask for things like "add a wine list section" or "show a photo on the print
 | Piece | What it does |
 | --- | --- |
 | Masthead | The restaurant's branded banner, full width |
-| Search | Filters every dish by English or French name, accents optional — `creme` finds *Crème* |
+| Search | Filters every dish by name, accents and apostrophes optional — `cesar` finds *Salade César*, `boeuf` finds *bœuf* |
 | Section rail | Sticky; **jumps** to a section and highlights whichever one you are reading |
-| Dish line | Name, brass tag marks, dotted leader, price, French line, and an Add/stepper control |
+| Dish line | Name, brass tag marks, dotted leader, price, and an Add/stepper control |
 | Basket bar | Appears only once something is selected: count, total, *View order* |
 | Order panel | Full-height panel — adjust quantities, add a name or table, send on WhatsApp |
 
@@ -118,7 +118,7 @@ card:
 1. Create a project at [supabase.com](https://supabase.com).
 2. SQL Editor → run [`supabase/schema.sql`](supabase/schema.sql) (tables, row-level security,
    photo bucket).
-3. SQL Editor → run [`supabase/seed.sql`](supabase/seed.sql) (the starter carte).
+3. SQL Editor → run [`supabase/seed.sql`](supabase/seed.sql) (Tango's carte).
 4. SQL Editor → run [`supabase/open-writes.sql`](supabase/open-writes.sql) — required, because
    the panel uses a static passcode rather than Supabase Auth. **Read the header comment in that
    file first.**
@@ -237,7 +237,7 @@ the print stylesheet has almost nothing to override.
 
 | File | What's in it |
 | --- | --- |
-| `src/menuData.js` | Seed carte — sections, dishes, French lines, prices, tags |
+| `src/menuData.js` | The carte — sections, dishes (in French), prices, tags |
 | `src/App.jsx` | The guest carte: shell, sections, scroll-spy, search, order state |
 | `src/components/Masthead.jsx` | The banner, and the typeset fallback when it is missing |
 | `src/components/SectionNav.jsx` | Sticky search field and section rail |
@@ -259,7 +259,7 @@ the print stylesheet has almost nothing to override.
 | `src/index.css` | Role tokens, resets, keyframes, the whole print stylesheet |
 | `index.html` | Google Fonts (Bodoni Moda + Jost), viewport, theme colour |
 | `supabase/schema.sql` | Tables, row-level security, storage bucket |
-| `scripts/gen-seed.mjs` | Regenerates `supabase/seed.sql` from the seed carte |
+| `scripts/gen-seed.mjs` | Generates `supabase/seed.sql` and `supabase/replace-menu.sql` from the carte |
 | `scripts/clear-photos.mjs` | Deletes orphaned photos from the bucket |
 
 ## Deploy to Cloudflare

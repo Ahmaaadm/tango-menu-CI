@@ -28,7 +28,8 @@ export function toCarte(db) {
 /* Accent-insensitive, so "creme" finds "Crème" — most guests type on a phone
    keyboard without accents, and half this carte carries them. */
 const fold = s =>
-  (s ?? '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  (s ?? '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u2018\u2019`´]/g, "'").replace(/œ/g, 'oe');
 
 /* Flat list of matching dishes, each carrying the section it came from so a
    result can still say where it lives on the carte. */

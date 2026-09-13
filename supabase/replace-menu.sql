@@ -1,7 +1,31 @@
--- Tango seed carte, generated from src/menuData.js by scripts/gen-seed.mjs.
--- Run AFTER schema.sql, on an empty database. Safe to re-run: existing rows
--- are left untouched. To swap an existing carte for this one, run
--- replace-menu.sql instead.
+-- Tango — ERASE the whole carte and load the real one.
+-- Generated from src/menuData.js by scripts/gen-seed.mjs. Do not edit by hand:
+-- change menuData.js and run `npm run seed:sql`.
+--
+-- Paste the whole file into Supabase → SQL Editor → Run.
+--
+-- Result: 6 sections, 50 dishes.
+-- 7 of them are HIDDEN from guests, because the printed menu gives no price.
+-- Set a price in #/staff, then switch "On the carte" on:
+--   · null
+--   · null
+--   · null
+--   · null
+--   · null
+--   · null
+--   · null
+--
+-- Everything runs as one transaction: if any line fails, nothing is erased.
+--
+-- THIS CANNOT BE UNDONE, and it does not delete uploaded photos — SQL only
+-- reaches the tables. If sections or dishes had photos, run
+-- `npm run clear:photos` afterwards (dry run first) to remove the orphans.
+
+begin;
+
+-- Dishes first, so the count is their own rather than a silent cascade.
+delete from dishes;
+delete from categories;
 
 insert into categories (id, name, french, note, note_french, image_url, sort_order) values
   ('entrees', 'Entrées', null, null, null, null, 0),
@@ -9,8 +33,7 @@ insert into categories (id, name, french, note, note_french, image_url, sort_ord
   ('plats', 'Plats', null, null, null, null, 2),
   ('braises', 'Plats africains · braisés', null, 'Nos plats sont servis avec la garniture de votre choix : riz, brocoli, chou-fleur, pommes de terre sautées, frites, alloco, légumes sautés, purée de pommes de terre ou gratin', null, null, 3),
   ('soupes', 'Plats africains · soupes', null, 'Nos plats sont servis avec la garniture de votre choix : riz, brocoli, chou-fleur, pommes de terre sautées, frites, alloco, légumes sautés, purée de pommes de terre ou gratin', null, null, 4),
-  ('boissons', 'Boissons', null, null, null, null, 5)
-on conflict (id) do nothing;
+  ('boissons', 'Boissons', null, null, null, null, 5);
 
 insert into dishes (id, category_id, name, french, price, image_url, hint, tags, available, sort_order) values
   ('en-avocat-thon', 'entrees', 'Salade d’avocat au thon', null, 7000, null, 'avocat thon', '{}', true, 0),
@@ -62,5 +85,12 @@ insert into dishes (id, category_id, name, french, price, image_url, hint, tags,
   ('bo-nespresso', 'boissons', 'Café Nespresso', null, 2000, null, 'nespresso', '{}', true, 7),
   ('bo-the-arabe', 'boissons', 'Thé arabe', null, 2000, null, 'the arabe', '{}', true, 8),
   ('bo-perrier', 'boissons', 'Perrier', null, 2000, null, 'perrier', '{}', true, 9),
-  ('bo-cafe-arabe', 'boissons', 'Café arabe', null, 2500, null, 'cafe arabe', '{}', true, 10)
-on conflict (id) do nothing;
+  ('bo-cafe-arabe', 'boissons', 'Café arabe', null, 2500, null, 'cafe arabe', '{}', true, 10);
+
+commit;
+
+-- Check: the numbers must match the header above.
+select
+  (select count(*) from categories)                    as sections,
+  (select count(*) from dishes)                        as dishes,
+  (select count(*) from dishes where not available)    as hidden_until_priced;

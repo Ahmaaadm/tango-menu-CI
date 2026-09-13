@@ -40,5 +40,6 @@ select
   (select count(*) from dishes)     as dishes_left;
 
 
--- STEP 4 (optional) — put the sample carte back with supabase/seed.sql.
+-- STEP 4 (optional) — put the carte back with supabase/seed.sql.
+-- (supabase/replace-menu.sql does steps 2 and 4 in one safe transaction.)
 -- Skip it to build the menu from scratch in the staff panel instead.

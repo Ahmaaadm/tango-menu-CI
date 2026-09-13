@@ -32,12 +32,12 @@ Budget about an hour, most of it waiting for the domain to switch over.
    | Order | File | What it does |
    | --- | --- | --- |
    | 1st | [`supabase/schema.sql`](supabase/schema.sql) | Creates the `categories` and `dishes` tables, their security rules, and the `tango-photos` bucket |
-   | 2nd | [`supabase/seed.sql`](supabase/seed.sql) | Loads the starter carte — 10 sections, 46 dishes |
+   | 2nd | [`supabase/seed.sql`](supabase/seed.sql) | Loads Tango's carte — 6 sections, 50 dishes (7 hidden until priced) |
    | 3rd | [`supabase/open-writes.sql`](supabase/open-writes.sql) | Lets the staff panel save. **Read the comment at the top first** |
 
    Each should end with *Success. No rows returned*.
 4. Check it worked:
-   - **Table Editor** → `categories` shows 10 rows, `dishes` shows 46.
+   - **Table Editor** → `categories` shows 6 rows, `dishes` shows 50.
    - **Storage** → a bucket called `tango-photos` exists.
 5. Get the two values the app needs. Click **Connect** at the top of the project (or
    **Project Settings → API Keys**) and copy:
@@ -85,7 +85,7 @@ This proves the app and the database talk to each other while it is still easy t
    ```
 
 4. Check, at http://localhost:5174:
-   - [ ] The carte loads — 10 sections.
+   - [ ] The carte loads — 6 sections.
    - [ ] Open `#/staff`, sign in with your passcode. The dark header says **Supabase**
          (not *Local browser storage*).
    - [ ] Change one price, **Save**, reload the carte — the new price is there.
@@ -235,6 +235,19 @@ On your **phone, on mobile data** (not the restaurant Wi-Fi — you want to see 
 - [ ] **A4** (in the staff panel, on a laptop) → *Save as PDF* — the carte prints with the banner.
 
 ---
+
+## Replacing the whole carte
+
+When the printed menu changes a lot, edit `src/menuData.js` rather than clicking through
+`#/staff` dish by dish:
+
+1. Edit `src/menuData.js`, then run `npm run seed:sql`.
+2. Supabase → **SQL Editor** → paste **all** of `supabase/replace-menu.sql` → **Run**.
+3. The result row must read the counts written at the top of that file.
+
+It erases every section and dish first — including prices and photos changed in `#/staff`
+since — and runs as one transaction, so a failure part-way leaves the old carte untouched.
+Photos are not deleted from storage; `npm run clear:photos` removes the orphans.
 
 ## Day to day — what needs a deploy and what doesn't
 
